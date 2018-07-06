@@ -9,11 +9,11 @@ struct heap_elem {
 struct heap {
 	size_t n_elems;
 	size_t size;
-	struct heap_elem **heap_arr;
+	struct heap_elem *heap_arr;
 }heap;
 
 bool heap_init(struct heap *h, size_t size);
 void heap_destroy(struct heap *h);
 bool heap_is_empty(const struct heap *h);
-bool heap_insert(struct heap *h, struct heap_elem *e);
-struct heap_elem* heap_get_min(struct heap *h);
+bool heap_insert(struct heap *h, struct heap_elem e);
+bool heap_get_min(struct heap *h, struct heap_elem *e);
