@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include "heap.h"
+
+/* This uses 1-indexed array for heap implementation.
+ * Element at index 0 is just undefined/ignored
+ */
+
+#define LCHILD(x) (2 * x)
+#define RCHILD(x) (2 * x + 1)
+#define PARENT(x) (x / 2)
+
+static bool heap_resize(struct heap *h, size_t new_size)
+{
+    assert(h);
+    assert(new_size >= h->size);
+
+    struct heap_elem **heap_arr_new = realloc(h->heap_arr, new_size);
+    if(!heap_arr_new) return false;
+
+    h->heap_arr = heap_arr_new;
+    h->size = new_size;
+
+    return true;
+}
+
+static bool heap_free_array(struct heap *h)
+{
+    assert(h);
+
+    for(size_t i = 1; i <= h->n_elems; i++) {
+        free((struct heap_elem*)h->heap_arr[i]);
+    }
+    free(h->heap_arr);
+    h->heap_arr = NULL;
+
+    return true;
+}
+
+bool heap_init(struct heap *h, size_t size)
+{
+    assert(h);
+
+	h->size = size + 1; /* +1 because we use 1-indexed array */
+	h->n_elems = 0;
+	h->heap_arr = calloc(h->size, sizeof(h->heap_arr[0]));
+    if (!h->heap_arr) return false;
+
+	return true;
+}
+
+void heap_destroy(struct heap *h)
+{
+    assert(h);
+
+    heap_free_array(h);
+    h->size = 0;
+    h->n_elems = 0;
+}
+
+bool heap_is_empty(const struct heap *h)
+{
+    assert(h);
+
+    return h->n_elems == 0 ? true : false;
+}
+
+bool heap_insert(struct heap *h, struct heap_elem *e)
+{
+    assert(h);
+
+	if(h->n_elems + 1 == h->size) {
+        if(!heap_resize(h, h->size * 2))
+            return false;
+	}
+
+	h->n_elems++;
+	h->heap_arr[h->n_elems] = e;
+
+	/* Shifting up if necessary */
+	size_t i = h->n_elems;
+	while(PARENT(i) >= 1)
+	{
+		if(h->heap_arr[i]->key >= h->heap_arr[PARENT(i)]->key) {
+			break;
+        }
+        else {
+			/* Swap i with its parent */
+			h->heap_arr[i] = h->heap_arr[PARENT(i)];
+			h->heap_arr[PARENT(i)] = e; /* The ith element is e */
+			i = PARENT(i);
+		}
+	}
+
+	return true;
+}
+
+struct heap_elem* heap_get_min(struct heap *h)
+{
+    assert(h);
+	if(h->n_elems == 0) return NULL;
+
+	struct heap_elem* min_elem = h->heap_arr[1];
+	h->heap_arr[1] = h->heap_arr[h->n_elems];
+	h->n_elems--;
+
+	/* Shifting down if necessary */
+	size_t i = 1;
+	while(LCHILD(i) <= h->n_elems)
+	{
+		/* find the smaller child first */
+		size_t smaller = LCHILD(i);
+		if(RCHILD(i) <= h->n_elems) {
+		    if(h->heap_arr[RCHILD(i)]->key < h->heap_arr[smaller]->key)
+		        smaller = RCHILD(i);
+        }
+
+		if(h->heap_arr[i]->key <= h->heap_arr[smaller]->key) {
+			break;
+        }
+		else {
+			/* swap i with smaller */
+			h->heap_arr[i] = h->heap_arr[smaller];
+            /* n_elems + 1 is a copy of the ith element */
+			h->heap_arr[smaller] = h->heap_arr[h->n_elems + 1];
+			i = smaller;
+		}
+	}
+
+	return min_elem;
+}
