@@ -30,15 +30,13 @@ bool heap_init(struct heap *h, size_t size)
 {
     assert(h);
 
-	h->size = size + 1; /* +1 because we use 1-indexed array */
-	h->n_elems = 0;
-	h->heap_arr = calloc(h->size, sizeof(h->heap_arr[0]));
-    if(!h->heap_arr) {
-        h->size = 0;
-        return false;
-    }
+    size++; /* 1-indexed array and size could be 0 */
+    h->n_elems = 0;
+    h->heap_arr = calloc(size, sizeof(h->heap_arr[0]));
+    if(!h->heap_arr) return false;
+    h->size = size;
 
-	return true;
+    return true;
 }
 
 void heap_destroy(struct heap *h)
