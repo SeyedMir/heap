@@ -8,11 +8,11 @@ struct heap_elem {
 
 struct heap {
 	size_t n_elems;
-	size_t size;
+	size_t cap;
 	struct heap_elem *heap_arr;
 }heap;
 
-bool heap_init(struct heap *h, size_t size);
+bool heap_init(struct heap *h, size_t cap);
 void heap_destroy(struct heap *h);
 bool heap_is_empty(const struct heap *h);
 bool heap_insert(struct heap *h, struct heap_elem e);

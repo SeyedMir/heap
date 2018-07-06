@@ -12,29 +12,29 @@
 #define RCHILD(x) (2 * x + 1)
 #define PARENT(x) (x / 2)
 
-static bool heap_resize(struct heap *h, size_t new_size)
+static bool heap_resize(struct heap *h, size_t new_cap)
 {
     assert(h);
-    assert(new_size >= h->size);
+    assert(new_cap >= h->cap);
 
-    struct heap_elem *heap_arr_new = realloc(h->heap_arr, new_size);
+    struct heap_elem *heap_arr_new = realloc(h->heap_arr, new_cap);
     if(!heap_arr_new) return false;
 
     h->heap_arr = heap_arr_new;
-    h->size = new_size;
+    h->cap = new_cap;
 
     return true;
 }
 
-bool heap_init(struct heap *h, size_t size)
+bool heap_init(struct heap *h, size_t cap)
 {
     assert(h);
 
-    size++; /* 1-indexed array and size could be 0 */
+    cap++; /* 1-indexed array and cap could be 0 */
     h->n_elems = 0;
-    h->heap_arr = calloc(size, sizeof(h->heap_arr[0]));
+    h->heap_arr = calloc(cap, sizeof(h->heap_arr[0]));
     if(!h->heap_arr) return false;
-    h->size = size;
+    h->cap = cap;
 
     return true;
 }
@@ -45,7 +45,7 @@ void heap_destroy(struct heap *h)
 
     free(h->heap_arr);
     h->heap_arr = NULL;
-    h->size = 0;
+    h->cap = 0;
     h->n_elems = 0;
 }
 
@@ -60,8 +60,8 @@ bool heap_insert(struct heap *h, struct heap_elem e)
 {
     assert(h);
 
-	if(h->n_elems + 1 == h->size) {
-        if(!heap_resize(h, h->size * 2))
+	if(h->n_elems + 1 == h->cap) {
+        if(!heap_resize(h, h->cap * 2))
             return false;
 	}
 
