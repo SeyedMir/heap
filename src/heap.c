@@ -17,7 +17,7 @@ static bool heap_resize(struct heap *h, size_t new_cap)
     assert(h);
     assert(new_cap >= h->cap);
 
-    struct heap_elem *heap_arr_new = realloc(h->heap_arr, new_cap);
+    struct heap_elem *heap_arr_new = realloc(h->heap_arr, new_cap * sizeof(h->heap_arr[0]));
     if(!heap_arr_new) return false;
 
     h->heap_arr = heap_arr_new;
