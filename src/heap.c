@@ -60,64 +60,64 @@ bool heap_insert(struct heap *h, struct heap_elem e)
 {
     assert(h);
 
-	if(h->n_elems + 1 == h->cap) {
+    if(h->n_elems + 1 == h->cap) {
         if(!heap_resize(h, h->cap * 2))
             return false;
-	}
+    }
 
-	h->n_elems++;
-	h->heap_arr[h->n_elems] = e;
+    h->n_elems++;
+    h->heap_arr[h->n_elems] = e;
 
-	/* Shifting up if necessary */
-	size_t i = h->n_elems;
-	while(PARENT(i) >= 1)
-	{
-		if(h->heap_arr[i].key >= h->heap_arr[PARENT(i)].key) {
-			break;
+    /* Shifting up if necessary */
+    size_t i = h->n_elems;
+    while(PARENT(i) >= 1)
+    {
+        if(h->heap_arr[i].key >= h->heap_arr[PARENT(i)].key) {
+            break;
         }
         else {
-			/* Swap i with its parent */
-			h->heap_arr[i] = h->heap_arr[PARENT(i)];
-			h->heap_arr[PARENT(i)] = e; /* The ith element is e */
-			i = PARENT(i);
-		}
-	}
+            /* Swap i with its parent */
+            h->heap_arr[i] = h->heap_arr[PARENT(i)];
+            h->heap_arr[PARENT(i)] = e; /* The ith element is e */
+            i = PARENT(i);
+        }
+    }
 
-	return true;
+    return true;
 }
 
 bool heap_get_min(struct heap *h, struct heap_elem *e)
 {
     assert(h);
-	if(heap_is_empty(h)) return false;
+    if(heap_is_empty(h)) return false;
 
-	*e = h->heap_arr[1];
+    *e = h->heap_arr[1];
 
     h->heap_arr[1] = h->heap_arr[h->n_elems];
-	h->n_elems--;
+    h->n_elems--;
 
     /* Shifting down if necessary */
-	size_t i = 1;
-	while(LCHILD(i) <= h->n_elems)
-	{
-		/* find the smaller child first */
-		size_t smaller = LCHILD(i);
-		if(RCHILD(i) <= h->n_elems) {
-		    if(h->heap_arr[RCHILD(i)].key < h->heap_arr[smaller].key)
-		        smaller = RCHILD(i);
+    size_t i = 1;
+    while(LCHILD(i) <= h->n_elems)
+    {
+        /* find the smaller child first */
+        size_t smaller = LCHILD(i);
+        if(RCHILD(i) <= h->n_elems) {
+            if(h->heap_arr[RCHILD(i)].key < h->heap_arr[smaller].key)
+                smaller = RCHILD(i);
         }
 
-		if(h->heap_arr[i].key <= h->heap_arr[smaller].key) {
-			break;
+        if(h->heap_arr[i].key <= h->heap_arr[smaller].key) {
+            break;
         }
-		else {
-			/* swap i with smaller */
-			h->heap_arr[i] = h->heap_arr[smaller];
+        else {
+            /* swap i with smaller */
+            h->heap_arr[i] = h->heap_arr[smaller];
             /* n_elems + 1 is a copy of the ith element */
-			h->heap_arr[smaller] = h->heap_arr[h->n_elems + 1];
-			i = smaller;
-		}
-	}
+            h->heap_arr[smaller] = h->heap_arr[h->n_elems + 1];
+            i = smaller;
+        }
+    }
 
-	return true;
+    return true;
 }
