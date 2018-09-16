@@ -6,13 +6,13 @@
 struct heap_elem {
     uint64_t key;
     uint64_t value;
-}heap_elem;
+};
 
 struct heap {
     size_t n_elems;
     size_t cap;
     struct heap_elem *heap_arr;
-}heap;
+};
 
 bool heap_init(struct heap *h, size_t cap);
 void heap_destroy(struct heap *h);
